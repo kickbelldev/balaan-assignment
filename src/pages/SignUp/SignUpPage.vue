@@ -1,28 +1,31 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseButton from '@/components/BaseButton.vue'
 import { useFunnel } from '@/composable/useFunnel'
+import StepOne from './StepOne.vue'
+import { RegisterData } from '@/types'
+import StepTwo from './StepTwo.vue'
+import StepThree from './StepThree.vue'
+import StepComplete from './StepComplete.vue'
 
-const { Step, Funnel, setStep } = useFunnel<'step1' | 'step2' | 'step3'>(
-  'step1'
-)
+const { Step, Funnel, setStep } = useFunnel<
+  'step1' | 'step2' | 'step3' | 'complete'
+>('step1')
 
-const registerData = ref<{
-  [key: string]: {
-    value: string
-    error?: string
-    validate: (value: string) => string | undefined
-  }
-}>({
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const passwordRegex = /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,}/
+const koreanRegex = /^[가-힣]{2,}$/
+const englishRegex = /^[A-Za-z]{3,}$/
+const phoneNumberRegex = /^0\d{2}([-|\s]?)\d{3,4}\1\d{4}$/
+const registerData = ref<RegisterData>({
   email: {
     value: '',
     error: undefined,
-    validate: (value: string) => {
+    validate() {
+      const { value } = this
       if (!value) {
         return '이메일을 입력해주세요.'
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      if (!emailRegex.test(value)) {
         return '올바른 이메일 형식이 아닙니다.'
       }
     },
@@ -30,121 +33,137 @@ const registerData = ref<{
   password: {
     value: '',
     error: undefined,
-    validate: (value: string) => {
+    validate() {
+      const { value } = this
       if (!value) {
         return '비밀번호를 입력해주세요.'
       }
-      if (!/[A-Za-z0-9!@#$%^&*()_+]{8}/.test(value)) {
-        return '비밀번호는 8자 이상으로 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.'
+      if (!passwordRegex.test(value)) {
+        return '비밀번호는 8자 이상으로 영문 대소문자, 숫자, 특수문자를 모두 포함해야 합니다.'
       }
     },
   },
   confirmPassword: {
     value: '',
     error: undefined,
-    validate: (value: string) => {
+    validate() {
+      const { value } = this
       if (!value) {
         return '비밀번호 확인을 입력해주세요.'
+      }
+      if (!passwordRegex.test(value)) {
+        return '비밀번호는 8자 이상으로 영문 대소문자, 숫자, 특수문자를 모두 포함해야 합니다.'
       }
       if (value !== registerData.value.password.value) {
         return '비밀번호가 일치하지 않습니다.'
       }
     },
   },
+  name: {
+    value: '',
+    error: undefined,
+    validate() {
+      const { value } = this
+      if (!value) {
+        return '이름을 입력해주세요.'
+      }
+      if (value.length < 2 || !koreanRegex.test(value)) {
+        if (value.length < 3 || !englishRegex.test(value)) {
+          return '이름은 2글자 이상의 한글 완성형 또는 3글자 이상의 영문 알파벳이어야 합니다. 특수문자, 숫자, 공백은 사용할 수 없습니다.'
+        }
+      }
+    },
+  },
+  contact: {
+    value: '',
+    error: undefined,
+    validate() {
+      const { value } = this
+      if (!value) {
+        return '연락처를 입력해주세요.'
+      }
+      if (!phoneNumberRegex.test(value)) {
+        return '올바른 연락처 형식이 아닙니다.'
+      }
+    },
+  },
+  address: {
+    value: '',
+    error: undefined,
+    validate() {
+      const { value } = this
+      if (!value) {
+        return '주소를 입력해주세요.'
+      }
+    },
+  },
+  detailAddress: {
+    value: '',
+    error: undefined,
+    validate() {
+      const { value } = this
+      if (!value) {
+        return '상세 주소를 입력해주세요.'
+      }
+    },
+  },
+  cardNumber: {
+    valueList: ['', '', '', ''],
+    error: undefined,
+    validate() {
+      const { valueList } = this
+      if (!valueList || !valueList.every((value) => value)) {
+        return '카드 번호를 입력해주세요.'
+      }
+      const cardNumber = valueList.join('')
+      if (
+        valueList.some((value) => value.length !== 4) ||
+        !/^\d{16}$/.test(cardNumber)
+      ) {
+        return '카드 번호는 16자리 숫자여야 합니다.'
+      }
+
+      const digits = cardNumber.split('').map(Number)
+      let sum = 0
+
+      for (let i = 0; i < digits.length; i++) {
+        if ((i + 1) % 2 === 0) {
+          const doubled = digits[i] * 2
+          sum += doubled > 9 ? (doubled % 10) + 1 : doubled
+        } else {
+          sum += digits[i]
+        }
+      }
+
+      if (sum % 10 !== 0) {
+        return '유효하지 않은 카드 번호입니다.'
+      }
+    },
+  },
 })
-
-const validateStepOne = () => {
-  registerData.value.email.error = registerData.value.email.validate(
-    registerData.value.email.value
-  )
-  return !registerData.value.email.error
-}
-const handleStepOne = () => {
-  if (!validateStepOne()) {
-    return
-  }
-  setStep('step2')
-}
-
-const validateStepTwo = () => {
-  registerData.value.password.error = registerData.value.password.validate(
-    registerData.value.password.value
-  )
-  registerData.value.confirmPassword.error =
-    registerData.value.confirmPassword.validate(
-      registerData.value.confirmPassword.value
-    )
-  return (
-    !registerData.value.password.error &&
-    !registerData.value.confirmPassword.error
-  )
-}
-
-const handleStepTwo = () => {
-  console.log('asd')
-  if (!validateStepTwo()) {
-    return
-  }
-  setStep('step3')
-}
 </script>
 
 <template>
   <Funnel>
     <Step name="step1">
-      <form
-        class="flex flex-col gap-4"
-        id="step1"
-        :key="'step1'"
-        @submit.prevent="handleStepOne"
-      >
-        <BaseInput
-          type="text"
-          label="이메일"
-          inputId="email"
-          :value="registerData.email.value"
-          @update="(value) => (registerData.email.value = value)"
-          :error="registerData.email.error"
-        />
-        <div class="flex gap-4">
-          <BaseButton type="submit" form="step1">
-            <span>다음</span>
-          </BaseButton>
-        </div>
-      </form>
+      <StepOne :registerData="registerData" @next="setStep('step2')" />
     </Step>
     <Step name="step2">
-      <form
-        class="flex flex-col gap-4"
-        id="step2"
-        :key="'step2'"
-        @submit.prevent="handleStepTwo"
-      >
-        <BaseInput
-          type="password"
-          label="비밀번호"
-          inputId="password"
-          :value="registerData.password.value"
-          @update="(value) => (registerData.password.value = value)"
-          :error="registerData.password.error"
-        />
-        <BaseInput
-          type="password"
-          label="비밀번호 확인"
-          inputId="confirmPassword"
-          :value="registerData.confirmPassword.value"
-          @update="(value) => (registerData.confirmPassword.value = value)"
-          :error="registerData.confirmPassword.error"
-        />
-        <div class="flex gap-4">
-          <BaseButton type="button" @click="setStep('step1')">
-            <span>이전</span>
-          </BaseButton>
-          <BaseButton type="submit" form="step2">
-            <span>회원가입</span>
-          </BaseButton>
-        </div>
-      </form>
+      <StepTwo
+        :registerData="registerData"
+        @prev="setStep('step1')"
+        @next="setStep('step3')"
+      />
+    </Step>
+    <Step name="step3">
+      <StepThree
+        :registerData="registerData"
+        @prev="setStep('step2')"
+        @next="setStep('complete')"
+      />
+    </Step>
+    <Step name="complete">
+      <StepComplete :registerData="registerData" />
     </Step>
   </Funnel>
 </template>
