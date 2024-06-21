@@ -1,5 +1,5 @@
 # 발란 FE 사전 과제
-<img src="https://github.com/kickbelldev/balaan-assignment/assets/31813451/5c8743a7-e044-4bc4-9dd5-2554292ab24e" width="300">
+<img src="https://github.com/kickbelldev/balaan-assignment/assets/31813451/70cd6936-e6ba-475a-b84f-7deae268e8a3" width="300">
 <img src="https://github.com/kickbelldev/balaan-assignment/assets/31813451/efaeaa87-342e-4298-8147-cf04fc2c0656" width="300">
 
 
