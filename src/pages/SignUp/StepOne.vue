@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue'
+import ButtonContainer from '@/components/ButtonContainer.vue'
 import InputField from '@/components/InputField.vue'
 import { RegisterData } from '@/types'
 
@@ -58,10 +59,10 @@ const handleSubmit = () => {
       @update="(value) => (registerData.confirmPassword.value = value)"
       :error="registerData.confirmPassword.error"
     />
-    <div class="flex gap-4">
+    <ButtonContainer>
       <BaseButton type="submit">
         <span>다음</span>
       </BaseButton>
-    </div>
+    </ButtonContainer>
   </form>
 </template>

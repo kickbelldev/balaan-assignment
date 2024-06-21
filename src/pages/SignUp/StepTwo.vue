@@ -3,6 +3,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import InputField from '@/components/InputField.vue'
 import AddressInput from '@/components/AddressInput.vue'
 import { RegisterData } from '@/types'
+import ButtonContainer from '@/components/ButtonContainer.vue'
 
 const props = defineProps<{
   registerData: RegisterData
@@ -64,13 +65,13 @@ const handleSubmit = () => {
       :detail-address-error="registerData.detailAddress.error"
       @update="(value) => (registerData.address.value = value)"
     />
-    <div class="flex gap-4">
+    <ButtonContainer>
       <BaseButton type="button" @click="handlePrev">
         <span>이전</span>
       </BaseButton>
       <BaseButton type="submit">
         <span>다음</span>
       </BaseButton>
-    </div>
+    </ButtonContainer>
   </form>
 </template>

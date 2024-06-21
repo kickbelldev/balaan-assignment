@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue'
+import ButtonContainer from '@/components/ButtonContainer.vue'
 import InputListField from '@/components/InputListField.vue'
 import { RegisterData } from '@/types'
 
@@ -40,10 +41,10 @@ const handleSubmit = () => {
       :error="registerData.cardNumber.error"
       :size="4"
     />
-    <div class="flex gap-4">
+    <ButtonContainer>
       <BaseButton type="submit">
         <span>다음</span>
       </BaseButton>
-    </div>
+    </ButtonContainer>
   </form>
 </template>
