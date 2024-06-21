@@ -8,6 +8,8 @@
 - typescript
 - vue.js v3
 - tailwindcss
+- vite
+- eslint & prettier
 
 ## 구현 기능
 
