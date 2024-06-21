@@ -1,17 +1,19 @@
 <template>
   <button
+    role="button"
     :type="type"
-    class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+    :form="form"
+    class="flex-1 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
     @click="handleClick"
   >
-    {{ label }}
+    <slot></slot>
   </button>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   type: 'button' | 'submit' | 'reset'
-  label: string
+  form?: string
 }>()
 
 const emit = defineEmits<{
