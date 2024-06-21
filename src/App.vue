@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SignUpPage from '@/pages/SignUp/SignUpPage.vue'
+import SignUpPage from '@/pages/SignUp'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 </script>
 
